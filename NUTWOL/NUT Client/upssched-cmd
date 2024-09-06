@@ -1,0 +1,45 @@
+#!/bin/sh
+
+EMAIL=`cat /etc/pve/user.cfg | grep root | awk '{split($0,a,":"); print a[7]}'`
+PROXMOXHOST=$(uname -n)
+
+ case $1 in
+        onbatt)
+	  logger -t upssched-cmd "UPS on battery"
+          /usr/sbin/upsmon -c fsd
+          ;;
+        commbad_message)
+	  curl -d "UPS disconnected!" https://ntfy.domain.com/channel
+          echo "UPS is not connected" | mailx -s "Proxmox ($PROXMOXHOST): UPS Warning" $EMAIL
+          ;;
+        online)
+	  logger -t upssched-cmd "UPS Online" | mailx -s "Proxmox ($PROXMOXHOST): UPS Warning" $EMAIL
+	  ;;
+        onbatt_ntfy)
+          curl -d "UPS on battery power!" https://ntfy.domain.com/channel
+          ;;
+        online_ntfy)
+          curl -d "UPS back on line power!" https://ntfy.domain.com/channel
+          ;;
+        commok_message)
+	  curl -d "UPS reconnected" https://ntfy.domain.com/channel
+          echo "UPS is connected again" | mailx -s "Proxmox ($PROXMOXHOST): UPS Warning" $EMAIL
+          ;;
+        nocomm_message)
+	  curl -d "UPS is not reachable!" https://ntfy.domain.com/channel
+          echo "UPS is not reachable" | mailx -s "Proxmox ($PROXMOXHOST): UPS Warning" $EMAIL
+          ;;
+        shutdowncritical)
+	  logger -t upssched-cmd "UPS on battery critical, forced shutdown"
+          ;;
+        upsgone)
+          logger -t upssched-cmd "UPS has been gone too long, can't reach"
+          ;;
+        shutdown_message)
+	  curl -d "UPS Alert: ProxMox shutdown initiated." https://ntfy.domain.com/channel
+          echo "Proxmox shutdown" | mailx -s "Promox ($PROXMOXHOST): UPS Warning" $EMAIL
+          ;;
+       *)
+          logger -t upssched-cmd "Unrecognized command: $1"
+          ;;
+ esac
