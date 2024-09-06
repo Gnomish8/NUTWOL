@@ -1,4 +1,4 @@
-Modify a copy of this shell script to match your environment and make it executable (sudo chmod u+x /path/to/script/wol.sh)
+Modify a copy of the wol.sh shell script to match your environment and make it executable (sudo chmod u+x /path/to/script/wol.sh)
 
 Update your Crontab to run this script at whatever frequency works for you, I run it every 30 minutes.
 
