@@ -1,3 +1,5 @@
+PREREQUISITE: Requires wakeonlan package to be installed on the NUT server if not already running (apt install wakeonlan). 
+
 Modify a copy of the wol.sh shell script to match your environment and make it executable (sudo chmod u+x /path/to/script/wol.sh)
 
 Update your Crontab to run the wol script at whatever frequency works for you, I run it every 30 minutes.
